@@ -8,7 +8,7 @@ use super::{hex_word::HexWord};
 pub struct Sentence(Vec<HexWord>);
 
 impl Sentence {
-    fn new(s : &str) -> Self {
+    pub fn new(s : &str) -> Self {
         let split : Vec<HexWord> = s.split(" ").into_iter().map(|w| HexWord::encode(w).unwrap()).collect();
         Self(split)
     }

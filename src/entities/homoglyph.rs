@@ -6,22 +6,21 @@ pub struct Homoglyph(HexWord);
 pub struct Homoglyphs(Vec<Homoglyph>);
 
 impl Homoglyph {
-    fn new(hex_word : HexWord) -> Self {
+    fn new(hex_word: HexWord) -> Self {
         Self(hex_word)
     }
 
-    fn to_string(&self) -> String{
+    fn to_string(&self) -> String {
         self.0.decode()
     }
 }
-
 
 impl Homoglyphs {
     pub fn new() -> Self {
         Self(Vec::<Homoglyph>::new())
     }
 
-    pub fn add(&mut self, homoglyph : Homoglyph) {
+    pub fn add(&mut self, homoglyph: Homoglyph) {
         self.0.push(homoglyph);
     }
 }
@@ -42,9 +41,6 @@ mod tests {
     fn given_an_homoglyph_when_to_string_then_decode_homoglyph_as_string() {
         let hex_word = HexWord::encode("rust").unwrap();
         let h = Homoglyph::new(hex_word);
-        
         assert_eq!(h.to_string(), "rust");
     }
-
-
 }

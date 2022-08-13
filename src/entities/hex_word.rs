@@ -2,11 +2,23 @@ use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::num::ParseIntError;
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct HexWord(Vec<String>);
+pub struct HexWord(pub Vec<String>);
 
 impl HexWord {
+    pub fn new() -> Self {
+        Self(Vec::<String>::new())
+    }
+
+    pub fn add(&mut self, s : String){
+        self.0.push(s);
+    }
+
+    //fn to_string(&self) -> String {
+    //    String::from(self.0)
+    //}
+
     pub fn encode(s: &str) -> Result<Self, ParseIntError> {
-        let vec : Vec<String> = s.chars().map(|c| format!("{:04x}", c as u32)).collect();
+        let vec: Vec<String> = s.chars().map(|c| format!("{:04x}", c as u32)).collect();
 
         Ok(Self(vec))
     }
@@ -15,6 +27,12 @@ impl HexWord {
         let decimal = self.0.iter().map(|h| u32::from_str_radix(h, 16).unwrap());
         decimal.map(|d| char::from_u32(d).unwrap()).collect()
     }
+
+    pub fn decode_from_string(encoded_slice: String) -> String{
+        char::from_u32(u32::from_str_radix(&encoded_slice, 16).unwrap()).unwrap().to_string()
+    }
+
+
 }
 
 impl Display for HexWord {
