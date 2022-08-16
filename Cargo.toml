@@ -1,15 +1,10 @@
-[package]
-name = "homoglyph"
-version = "0.1.0"
-edition = "2021"
+[workspace]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+members = [
+    "domain",
+    "drivers",
+    "cli",
+    "api"
+]
 
-[dependencies]
-derive_more = "0.99.17"
-itertools = "0.10.3"
-permutator = "0.4.3"
-rayon = "1.5.3"
-tantivy = "0.18.0"
-tempfile = "3.3.0"
-unicode-segmentation = "1.9.0"
+default-run = "cli"

@@ -1,17 +1,19 @@
 use std::fs::File;
 use std::io::{self, BufRead};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use tantivy::collector::TopDocs;
 use tantivy::directory::MmapDirectory;
 use tantivy::query::{Query, QueryParser};
 use tantivy::schema::{STORED, TEXT};
+use tantivy::{doc, IndexSettings, IndexWriter, ReloadPolicy};
 use tantivy::{schema::Schema, Index};
-use tantivy::{IndexSettings, IndexWriter, ReloadPolicy, doc};
 
-use crate::entities::domains::Domains;
-use crate::entities::hex_word::HexWord;
-use crate::entities::sentence::Sentence;
+use domain::domains::Domains;
+use domain::hex_word::HexWord;
+use domain::sentence::Sentence;
+use domain::confusable;
+use tempfile::TempDir;
 
 pub struct Tantivy {
     index: Index,
@@ -22,7 +24,7 @@ pub struct Tantivy {
 
 impl Tantivy {
     const HEX_GLYPH_FILE: &'static str = "./src/data/homoglyphs.txt";
-    const DIRECTORY: &'static str = "./temp";
+    //const DIRECTORY: &'static str = "./temp";
 
     fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
     where
@@ -32,16 +34,17 @@ impl Tantivy {
         Ok(io::BufReader::new(file).lines())
     }
 
-    pub fn create_schema() -> Schema {
+    fn create_schema() -> Schema {
         let mut schema_builder = Schema::builder();
         schema_builder.add_text_field("glyph", TEXT | STORED);
         schema_builder.build()
     }
-    pub fn create_index(directory: &str, schema: &Schema) -> Index {
+
+    fn create_index(directory: PathBuf, schema: &Schema) -> Index {
         let mmap = MmapDirectory::open(directory).unwrap();
         Index::create(mmap.to_owned(), schema.to_owned(), IndexSettings::default()).unwrap()
     }
-    pub fn create_index_writer(index: &Index) -> IndexWriter {
+    fn create_index_writer(index: &Index) -> IndexWriter {
         index.writer(50_000_000).unwrap()
     }
 
@@ -50,7 +53,8 @@ impl Tantivy {
     //impl SearchEngine<'_> for Tantivy{
     fn init() -> Self {
         let schema = Tantivy::create_schema();
-        let index = Tantivy::create_index(Tantivy::DIRECTORY, &schema);
+        let index_path = TempDir::new().unwrap().into_path();
+        let index = Tantivy::create_index(index_path, &schema);
         let index_writer = Tantivy::create_index_writer(&index);
         Self {
             index,
@@ -60,20 +64,28 @@ impl Tantivy {
         }
     }
 
-    fn index(&mut self) {
+    pub fn index(&mut self) {
+        let confusable = confusable::confusable::HEX_FILE;
+
         let glyph = self.schema.get_field("glyph").unwrap();
 
-        if let Ok(lines) = Tantivy::read_lines(Tantivy::HEX_GLYPH_FILE) {
-            for line in lines {
-                if let Ok(ip) = line {
-                    self.index_writer.add_document(doc!(glyph => ip)).unwrap();
-                }
-            }
+        //if let Ok(lines) = Tantivy::read_lines(Tantivy::HEX_GLYPH_FILE) {
+        for line in confusable.lines() {
+            //if let Ok(ip) = line {
+            self.index_writer.add_document(doc!(glyph => line)).unwrap();
+            //}
         }
+        //}
         self.index_writer.commit().unwrap();
     }
 
-    fn query(&mut self, mut sentence: Sentence) {
+    pub fn start_tantivy() -> Self {
+        let mut se = Self::init();
+        se.index();
+        se
+    }
+
+    pub fn query(&mut self, mut sentence: Sentence) {
         let glyph = self.schema.get_field("glyph").unwrap();
         let query_parser = QueryParser::for_index(&self.index, vec![glyph]);
 
@@ -85,7 +97,7 @@ impl Tantivy {
         }
     }
 
-    fn search(&mut self) -> Domains {
+    pub fn search(&mut self) -> Domains {
         let reader = self
             .index
             .reader_builder()

@@ -1,6 +1,6 @@
 use permutator::CartesianProductIterator;
 
-use super::{homoglyph::Homoglyph, domains::Domains, hex_word::HexWord};
+use super::{domains::Domains, hex_word::HexWord};
 
 pub struct Homoglyphs {
     pub homoglyphs : Vec<String>,
@@ -15,14 +15,14 @@ impl Homoglyphs {
         }
     }
 
-    fn generate(&mut self){
+    pub fn generate(&mut self){
         
-        let tmp: Vec<Vec<&str>> = self.domains.domain
+        let vec: Vec<Vec<&str>> = self.domains.domain
             .iter()
             .map(|list| list.0.iter().map(AsRef::as_ref).collect::<Vec<&str>>())
             .collect();
 
-        let vector_of_arrays: Vec<&[&str]> = tmp.iter().map(AsRef::as_ref).collect();
+        let vector_of_arrays: Vec<&[&str]> = vec.iter().map(AsRef::as_ref).collect();
         let str_domains : &[&[&str]] = &vector_of_arrays[..];
         
         let cart = CartesianProductIterator::new(str_domains).into_iter();

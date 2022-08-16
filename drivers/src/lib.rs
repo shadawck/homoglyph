@@ -1,5 +1,5 @@
-use crate::entities::domains::Domains;
-use crate::entities::sentence::Sentence;
+//use domain::domains::Domains;
+//use domain::sentence::Sentence;
 
 pub mod tantivy;
 

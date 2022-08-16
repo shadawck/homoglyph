@@ -1,6 +1,14 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::num::ParseIntError;
 
+pub trait Encodable<T> {
+    fn encode(&self) -> Result<T, ParseIntError>;
+}
+
+pub trait Decodable<T> {
+    fn decode(&self) -> Result<T, ParseIntError>;
+}
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct HexWord(pub Vec<String>);
 
@@ -12,10 +20,6 @@ impl HexWord {
     pub fn add(&mut self, s : String){
         self.0.push(s);
     }
-
-    //fn to_string(&self) -> String {
-    //    String::from(self.0)
-    //}
 
     pub fn encode(s: &str) -> Result<Self, ParseIntError> {
         let vec: Vec<String> = s.chars().map(|c| format!("{:04x}", c as u32)).collect();
