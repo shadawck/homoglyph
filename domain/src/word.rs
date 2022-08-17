@@ -1,8 +1,8 @@
-use std::{num::ParseIntError, str::FromStr};
+use std::{num::ParseIntError, slice::Iter, str::FromStr};
 
 use crate::{
     glyph::{EncodedGlyph, Glyph},
-    hex_word::{Decodable, Encodable},
+    Decodable, Encodable,
 };
 
 #[derive(Debug, PartialEq)]
@@ -39,13 +39,60 @@ impl Encodable<EncodedWord> for Word {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct EncodedWord(Vec<EncodedGlyph>);
+pub struct EncodedWord(pub Vec<EncodedGlyph>);
 
 impl EncodedWord {
     pub fn new(encoded_glyphs: Vec<EncodedGlyph>) -> Self {
         EncodedWord(encoded_glyphs)
     }
+
+    pub fn to_string(&self) -> String {
+        let mut string = String::new();
+        for glyph_enc in self.0.iter() {
+            string.push_str(glyph_enc.0.as_str())
+        }
+        string
+    }
+    pub fn iter(&self) -> Iter<EncodedGlyph> {
+        self.0.iter()
+    }
 }
+
+//impl From<&str> for EncodedWord {
+//    fn from(s: &str) -> Self {
+//        // Check of encoded_str
+//        let mut word: Vec<EncodedGlyph> = Vec::new();
+//        for c in s.chars().into_iter() {
+//            word.push(EncodedGlyph::from(c));
+//        }
+//
+//        EncodedWord::new(word)
+//    }
+//}
+//
+impl From<EncodedWord> for String {
+    fn from(word_enc: EncodedWord) -> Self {
+        let mut string = String::new();
+        for glyph_enc in word_enc.0.iter() {
+            string.push_str(glyph_enc.0.as_str())
+        }
+        string
+    }
+}
+
+//impl FromStr for EncodedWord {
+//    type Err = ();
+//
+//    fn from_str(s: &str) -> Result<Self, Self::Err> {
+//        // Check of encoded_str
+//        let mut word: Vec<EncodedGlyph> = Vec::new();
+//        for c in s.chars().into_iter() {
+//            word.push(EncodedGlyph::from(c));
+//        }
+//
+//        Ok(EncodedWord::new(word))
+//    }
+//}
 
 impl Decodable<Word> for EncodedWord {
     fn decode(&self) -> Result<Word, ParseIntError> {
@@ -58,7 +105,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_encodeable() {
+    fn test_encodable_then_decodable() {
         let w = Word::from_str("rust").unwrap();
         let w_enc = w.encode().unwrap();
         let w_dec = w_enc.decode().unwrap();

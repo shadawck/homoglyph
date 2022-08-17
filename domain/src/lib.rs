@@ -1,10 +1,20 @@
-pub mod hex_word;
+use std::num::ParseIntError;
 
+//pub mod hex_word;
+
+pub mod confusable;
+pub mod domain;
 pub mod homoglyph;
 pub mod homoglyphs;
-pub mod domains;
-pub mod confusable;
 
+pub mod glyph;
 pub mod sentence;
 pub mod word;
-pub mod glyph;
+
+pub trait Encodable<T> {
+    fn encode(&self) -> Result<T, ParseIntError>;
+}
+
+pub trait Decodable<T> {
+    fn decode(&self) -> Result<T, ParseIntError>;
+}

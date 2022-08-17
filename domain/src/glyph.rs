@@ -1,6 +1,6 @@
-use std::num::ParseIntError;
+use std::{num::ParseIntError, str::FromStr};
 
-use crate::hex_word::{Decodable, Encodable};
+use crate::{Decodable, Encodable};
 
 #[derive(Debug, PartialEq)]
 pub struct Glyph(pub char);
@@ -23,6 +23,27 @@ pub struct EncodedGlyph(pub String);
 impl EncodedGlyph {
     pub fn new(encoded_glyph: String) -> Self {
         Self(encoded_glyph)
+    }
+}
+
+impl FromStr for EncodedGlyph {
+    type Err = ();
+
+    // EncodedGlyph::from_str("14e5c")
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(EncodedGlyph::new(s.to_string()))
+    }
+}
+
+impl From<char> for EncodedGlyph {
+    fn from(c_enc: char) -> Self {
+        Self::new(c_enc.to_string())
+    }
+}
+
+impl From<String> for EncodedGlyph {
+    fn from(s_enc: String) -> Self {
+        EncodedGlyph::from_str(s_enc.as_str()).unwrap()
     }
 }
 
