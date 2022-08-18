@@ -22,8 +22,11 @@ fn main() {
 
     search_engine.query(sentence_enc);
 
-    let new_sd : SentenceDomain = search_engine.search();
+    let new_sd: SentenceDomain = search_engine.search();
 
-    println!("{:#?}", new_sd);
-    println!("{:?}", new_sd.generate());
+    let test = new_sd.generate(Some(5));
+
+    for t in test {
+        println!("{}", t);
+    }
 }

@@ -24,7 +24,7 @@ impl WordDomain {
         Self(new_domain)
     }
 
-    pub fn generate(&mut self) -> Vec<String> {
+    pub fn generate(&mut self, n: Option<usize>) -> Homoglyphs {
         let mut string = Vec::new();
 
         let mut vec: Vec<Vec<&str>> = Vec::new();
@@ -39,28 +39,30 @@ impl WordDomain {
         let vector_of_arrays: Vec<&[&str]> = vec.iter().map(AsRef::as_ref).collect();
         let str_domains: &[&[&str]] = &vector_of_arrays[..];
 
-        let mut counter = 0;
-        let timer = Instant::now();
-        let cart = CartesianProductIterator::new(str_domains).into_iter();
+        //let mut counter = 0;
+        //let timer = Instant::now();
+        let mut cart = CartesianProductIterator::new(str_domains).into_iter();
 
-        for permutation in cart {
-            counter += 1;
-            let p: String = permutation
-                .iter()
-                .map(|string_glyph_enc| {
-                    EncodedGlyph::from(string_glyph_enc.to_string())
-                        .decode()
-                        .unwrap()
-                        .0
-                })
-                .collect();
+        for _ in 0..n.unwrap_or(cart.len()) {
+            for permutation in cart.next() {
+                //counter += 1;
+                let p: String = permutation
+                    .iter()
+                    .map(|string_glyph_enc| {
+                        EncodedGlyph::from(string_glyph_enc.to_string())
+                            .decode()
+                            .unwrap()
+                            .0
+                    })
+                    .collect();
 
-            string.push(p);
+                string.push(p);
+            }
         }
 
-        println!("{:?}", string);
-        println!("Total {} products done in {:?}", counter, timer.elapsed());
-        string
+        //println!("{:?}", string);
+        //println!("Total {} products done in {:?}", counter, timer.elapsed());
+        Homoglyphs::from(string)
     }
 }
 
@@ -72,10 +74,12 @@ impl SentenceDomain {
         Self(word_domains)
     }
 
-    pub fn generate(mut self) {
+    pub fn generate(mut self, n: Option<usize>) -> Vec<Homoglyphs> {
+        let mut sentence_homoglyph = Vec::<Homoglyphs>::new();
         for wd in self.0.iter_mut() {
-            let h_for_word = wd.generate();
+            sentence_homoglyph.push(wd.generate(n));
         }
+        sentence_homoglyph
     }
 }
 

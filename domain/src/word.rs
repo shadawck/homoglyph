@@ -58,18 +58,18 @@ impl EncodedWord {
     }
 }
 
-//impl From<&str> for EncodedWord {
-//    fn from(s: &str) -> Self {
-//        // Check of encoded_str
-//        let mut word: Vec<EncodedGlyph> = Vec::new();
-//        for c in s.chars().into_iter() {
-//            word.push(EncodedGlyph::from(c));
-//        }
-//
-//        EncodedWord::new(word)
-//    }
-//}
-//
+impl From<&str> for EncodedWord {
+    fn from(s: &str) -> Self {
+        // Check of encoded_str
+        let mut word: Vec<EncodedGlyph> = Vec::new();
+        for c in s.chars().into_iter() {
+            word.push(EncodedGlyph::from(c));
+        }
+
+        EncodedWord::new(word)
+    }
+}
+
 impl From<EncodedWord> for String {
     fn from(word_enc: EncodedWord) -> Self {
         let mut string = String::new();
@@ -80,19 +80,19 @@ impl From<EncodedWord> for String {
     }
 }
 
-//impl FromStr for EncodedWord {
-//    type Err = ();
-//
-//    fn from_str(s: &str) -> Result<Self, Self::Err> {
-//        // Check of encoded_str
-//        let mut word: Vec<EncodedGlyph> = Vec::new();
-//        for c in s.chars().into_iter() {
-//            word.push(EncodedGlyph::from(c));
-//        }
-//
-//        Ok(EncodedWord::new(word))
-//    }
-//}
+impl FromStr for EncodedWord {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        // Check of encoded_str
+        let mut word: Vec<EncodedGlyph> = Vec::new();
+        for c in s.chars().into_iter() {
+            word.push(EncodedGlyph::from(c));
+        }
+
+        Ok(EncodedWord::new(word))
+    }
+}
 
 impl Decodable<Word> for EncodedWord {
     fn decode(&self) -> Result<Word, ParseIntError> {

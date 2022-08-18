@@ -108,7 +108,6 @@ impl Tantivy {
 
         /// vec of queries for each word
         for queries in &self.queries_by_domain {
-            println!("{:?}", queries);
             // queries of confusable in each word
             let mut world_domain: Vec<EncodedWord> = Vec::new();
 

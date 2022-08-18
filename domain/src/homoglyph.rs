@@ -1,23 +1,16 @@
-use std::time::Instant;
+use std::slice::Iter;
 
-use permutator::CartesianProductIterator;
+use crate::{glyph::Glyph, word::Word};
 
-use crate::{
-    glyph::{EncodedGlyph, Glyph},
-    word::Word,
-    Decodable,
-};
-
-use super::domain::WordDomain;
-
-pub struct Homoglyph {
-    pub homoglyphs: Word,
-}
+#[derive(Debug, PartialEq)]
+pub struct Homoglyph(Word);
 
 impl Homoglyph {
-    pub fn new() -> Homoglyph {
-        Self {
-            homoglyphs: Word::new(Vec::<Glyph>::new()),
-        }
+    pub fn new(word: Word) -> Homoglyph {
+        Self(word)
+    }
+
+    pub fn iter(&self) -> Iter<Glyph> {
+        self.0 .0.iter()
     }
 }
