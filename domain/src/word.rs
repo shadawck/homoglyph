@@ -1,11 +1,11 @@
-use std::{num::ParseIntError, slice::Iter, str::FromStr};
+use serde::{Deserialize, Serialize};
 
 use crate::{
     glyph::{EncodedGlyph, Glyph},
     Decodable, Encodable,
 };
-
-#[derive(Debug, PartialEq)]
+use std::{num::ParseIntError, slice::Iter, str::FromStr};
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Word(pub Vec<Glyph>);
 
 impl Word {
@@ -24,6 +24,16 @@ impl FromStr for Word {
         }
 
         Ok(Word::new(word))
+    }
+}
+
+impl From<Word> for String {
+    fn from(word: Word) -> Self {
+        let mut string = String::new();
+        for glyph in word.0.iter() {
+            string.push_str(glyph.0.to_string().as_str())
+        }
+        string
     }
 }
 
@@ -53,6 +63,7 @@ impl EncodedWord {
         }
         string
     }
+
     pub fn iter(&self) -> Iter<EncodedGlyph> {
         self.0.iter()
     }

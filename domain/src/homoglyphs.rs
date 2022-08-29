@@ -1,10 +1,9 @@
-use std::{fmt::Display, str::FromStr, time::Instant};
-
 use crate::{homoglyph::Homoglyph, word::Word};
+use serde::{Deserialize, Serialize};
+use std::{fmt::Display, str::FromStr};
 
-#[derive(Debug, PartialEq)]
-
-pub struct Homoglyphs(Vec<Homoglyph>);
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Homoglyphs(pub Vec<Homoglyph>);
 
 impl Homoglyphs {
     pub fn new(homoglyphs: Vec<Homoglyph>) -> Homoglyphs {

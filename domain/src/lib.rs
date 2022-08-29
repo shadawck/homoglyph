@@ -1,7 +1,5 @@
 use std::num::ParseIntError;
 
-//pub mod hex_word;
-
 pub mod confusable;
 pub mod domain;
 pub mod homoglyph;

@@ -1,8 +1,6 @@
-use std::{fmt::Display, time::Instant};
-
-use permutator::CartesianProductIterator;
-
 use crate::{glyph::EncodedGlyph, homoglyphs::Homoglyphs, word::EncodedWord, Decodable};
+use permutator::CartesianProductIterator;
+use std::fmt::Display;
 
 #[derive(Debug)]
 pub struct WordDomain(pub Vec<EncodedWord>);

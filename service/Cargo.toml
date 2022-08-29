@@ -1,0 +1,25 @@
+[package]
+name = "service"
+version = "0.1.0"
+edition = "2021"
+authors = ["shadawck"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+domain = { path = "../domain" }
+drivers = { path = "../drivers" }
+#serde = { version = "1.0", features = ["derive"] }
+#wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+#getrandom = { version = "0.2", features = ["js"] }
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "services"
+
+#[package.metadata.wasm-pack.profile.release]
+#wasm-opt = false
+#
+#[profile.release]
+## Tell `rustc` to optimize for small code size.
+#opt-level = "s"

@@ -1,10 +1,5 @@
 [workspace]
 
-members = [
-    "domain",
-    "drivers",
-    "cli",
-    "api"
-]
+members = ["domain", "service", "drivers", "cli", "api"]
 
 default-run = "cli"

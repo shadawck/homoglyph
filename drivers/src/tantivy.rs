@@ -1,12 +1,10 @@
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::{Path, PathBuf};
+//use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
-use domain::glyph::{EncodedGlyph, Glyph};
-use domain::word::{self, EncodedWord};
+use domain::glyph::EncodedGlyph;
+use domain::word::EncodedWord;
 use tantivy::collector::TopDocs;
-use tantivy::directory::MmapDirectory;
+use tantivy::directory::RamDirectory;
 use tantivy::query::{Query, QueryParser};
 use tantivy::schema::{STORED, TEXT};
 use tantivy::{doc, IndexSettings, IndexWriter, ReloadPolicy};
@@ -14,8 +12,7 @@ use tantivy::{schema::Schema, Index};
 
 use domain::confusable;
 use domain::domain::{SentenceDomain, WordDomain};
-use domain::sentence::{EncodedSentence, Sentence};
-use tempfile::TempDir;
+use domain::sentence::EncodedSentence;
 
 pub struct Tantivy {
     index: Index,
@@ -25,33 +22,32 @@ pub struct Tantivy {
 }
 
 impl Tantivy {
-    //fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-    //where
-    //    P: AsRef<Path>,
-    //{
-    //    let file = File::open(filename)?;
-    //    Ok(io::BufReader::new(file).lines())
-    //}
-
     fn create_schema() -> Schema {
         let mut schema_builder = Schema::builder();
         schema_builder.add_text_field("glyph", TEXT | STORED);
         schema_builder.build()
     }
 
-    fn create_index(directory: PathBuf, schema: &Schema) -> Index {
-        let mmap = MmapDirectory::open(directory).unwrap();
-        Index::create(mmap.to_owned(), schema.to_owned(), IndexSettings::default()).unwrap()
+    fn create_in_ram_index(ram_directory: RamDirectory, schema: &Schema) -> Index {
+        Index::create(
+            ram_directory.to_owned(),
+            schema.to_owned(),
+            IndexSettings::default(),
+        )
+        .unwrap()
     }
+
     fn create_index_writer(index: &Index) -> IndexWriter {
         index.writer(50_000_000).unwrap()
     }
 
-    fn init() -> Self {
+    pub fn init() -> Self {
         let schema = Tantivy::create_schema();
-        let index_path = TempDir::new().unwrap().into_path();
-        let index = Tantivy::create_index(index_path, &schema);
+        let ramd = RamDirectory::create();
+
+        let index = Tantivy::create_in_ram_index(ramd, &schema);
         let index_writer = Tantivy::create_index_writer(&index);
+
         Self {
             index,
             schema,
@@ -65,20 +61,11 @@ impl Tantivy {
 
         let glyph = self.schema.get_field("glyph").unwrap();
 
-        //if let Ok(lines) = Tantivy::read_lines(Tantivy::HEX_GLYPH_FILE) {
         for line in confusable.lines() {
-            //if let Ok(ip) = line {
             self.index_writer.add_document(doc!(glyph => line)).unwrap();
-            //}
         }
-        //}
-        self.index_writer.commit().unwrap();
-    }
 
-    pub fn start_tantivy() -> Self {
-        let mut se = Self::init();
-        se.index();
-        se
+        self.index_writer.commit().unwrap();
     }
 
     pub fn query(&mut self, mut sentence_enc: EncodedSentence) {
@@ -106,7 +93,7 @@ impl Tantivy {
 
         let mut sentence_domain: Vec<WordDomain> = Vec::new();
 
-        /// vec of queries for each word
+        // vec of queries for each word
         for queries in &self.queries_by_domain {
             // queries of confusable in each word
             let mut world_domain: Vec<EncodedWord> = Vec::new();
@@ -143,7 +130,7 @@ impl Tantivy {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::str::FromStr;
+    use domain::sentence::{EncodedSentence, Sentence};
 
     #[test]
     fn when_init_then_create_resource() {
