@@ -1,9 +1,9 @@
 use crate::{glyph::Glyph, word::Word};
 use serde::{Deserialize, Serialize};
-use std::slice::Iter;
+use std::{fmt::Display, slice::Iter};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-pub struct Homoglyph(Word);
+pub struct Homoglyph(pub Word);
 
 impl Homoglyph {
     pub fn new(word: Word) -> Homoglyph {
@@ -15,14 +15,8 @@ impl Homoglyph {
     }
 }
 
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_homoglyph() {
-        //let w = Word::from_str("rust").unwrap();
-        //let res = Homoglyph::from(vec!["rust".to_string()]);
-        //
-        //print!("{:#?}", res);
+impl Display for Homoglyph {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}\n", self.0.to_string())
     }
 }

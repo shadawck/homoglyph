@@ -1,8 +1,8 @@
 use crate::{glyph::EncodedGlyph, homoglyphs::Homoglyphs, word::EncodedWord, Decodable};
 use permutator::CartesianProductIterator;
-use std::fmt::Display;
+use std::{fmt::Display, slice::Iter, str::FromStr};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct WordDomain(pub Vec<EncodedWord>);
 
 impl WordDomain {
@@ -11,12 +11,17 @@ impl WordDomain {
     }
 
     /// Take only 'n' confusable for each glyph to build the domain of a word
-    pub fn take(self, n: usize) -> Self {
+    pub fn take(&mut self, n: usize) -> Self {
         let mut new_domain: Vec<EncodedWord> = Vec::new();
-        for enc_word in self.0 {
+        let mut dest = vec![EncodedWord::from_str("").unwrap(); self.0.len()];
+        dest.clone_from_slice(&self.0.as_slice());
+
+        for enc_word in dest {
             if enc_word.0.len() >= n {
                 let new_word = Vec::from_iter(enc_word.0.into_iter().take(n));
                 new_domain.push(EncodedWord::new(new_word));
+            } else {
+                new_domain.push(enc_word)
             }
         }
         Self(new_domain)
@@ -39,10 +44,17 @@ impl WordDomain {
 
         //let mut counter = 0;
         //let timer = Instant::now();
-        let mut cart = CartesianProductIterator::new(str_domains).into_iter();
+        let cart = CartesianProductIterator::new(str_domains).into_iter();
 
-        for _ in 0..n.unwrap_or(cart.len()) {
-            for permutation in cart.next() {
+        let match_n = match n {
+            Some(n) => n,
+            None => cart.len(),
+        };
+
+        let mut cart_take = cart.take(match_n);
+
+        for _ in 0..match_n {
+            for permutation in cart_take.next() {
                 //counter += 1;
                 let p: String = permutation
                     .iter()
@@ -62,9 +74,13 @@ impl WordDomain {
         //println!("Total {} products done in {:?}", counter, timer.elapsed());
         Homoglyphs::from(string)
     }
+
+    pub fn iter(&self) -> Iter<EncodedWord> {
+        self.0.iter()
+    }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct SentenceDomain(pub Vec<WordDomain>);
 
 impl SentenceDomain {
@@ -78,6 +94,10 @@ impl SentenceDomain {
             sentence_homoglyph.push(wd.generate(n));
         }
         sentence_homoglyph
+    }
+
+    pub fn iter(&self) -> Iter<WordDomain> {
+        self.0.iter()
     }
 }
 

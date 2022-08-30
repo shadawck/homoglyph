@@ -5,12 +5,24 @@ use crate::{
     Decodable, Encodable,
 };
 use std::{num::ParseIntError, slice::Iter, str::FromStr};
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub struct Word(pub Vec<Glyph>);
 
 impl Word {
     pub fn new(glyphs: Vec<Glyph>) -> Self {
         Self(glyphs)
+    }
+
+    pub fn iter(&self) -> Iter<Glyph> {
+        self.0.iter()
+    }
+
+    pub fn to_string(&self) -> String {
+        let mut string = String::new();
+        for glyph_dec in self.0.iter() {
+            string.push_str(glyph_dec.0.to_string().as_str());
+        }
+        string
     }
 }
 
@@ -48,7 +60,7 @@ impl Encodable<EncodedWord> for Word {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct EncodedWord(pub Vec<EncodedGlyph>);
 
 impl EncodedWord {
@@ -112,6 +124,7 @@ impl Decodable<Word> for EncodedWord {
     }
 }
 
+#[cfg(test)]
 mod tests {
     use super::*;
 

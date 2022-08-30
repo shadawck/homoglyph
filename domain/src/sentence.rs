@@ -4,9 +4,7 @@ use crate::{
 };
 use std::{fmt, num::ParseIntError, slice::Iter, str::FromStr};
 
-// ############################################################### //
-
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Sentence(Vec<Word>);
 
 impl Sentence {
@@ -55,9 +53,7 @@ impl Encodable<EncodedSentence> for Sentence {
     }
 }
 
-// ############################################################### //
-
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct EncodedSentence(Vec<EncodedWord>);
 
 impl EncodedSentence {

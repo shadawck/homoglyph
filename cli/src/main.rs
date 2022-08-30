@@ -1,33 +1,22 @@
-// homoglyphs -h 10 -c 5 "rust is best"
-// homoglyphs -h 10 "rust is best"
+// homoglyphs -n 10 -c 5 "rust is best"
+// homoglyphs -n 10 "rust is best"
 // homoglyphs -c 5 "rust is best"
 // homoglyphs "rust is best"
 
-use clap::{value_parser, App, Arg, Parser};
-use domain::sentence::{self, EncodedSentence, Sentence};
+use clap::{value_parser, App, Arg};
+use domain::homoglyphs::Homoglyphs;
 use drivers::tantivy::Tantivy;
 use services::{self, ComputeHomoglyphs};
-
-//#[derive(Parser, Debug)]
-//#[clap(author, version, about, long_about = None)]
-//pub struct Cli {
-//    /// Sentence for which the possible homoglyphs are calculated
-//    #[clap(forbid_empty_values = true)]
-//    sentence: String,
-//    /// Number of Homoglyphs to generate
-//    #[clap(short, long, value_parser, validator = validate_homoglyphs_limit)]
-//    homoglyphs_limit: usize,
-//    /// Number of confusable to use for each letter of the Input sentence
-//    #[clap(short, long, value_parser)]
-//    confusable_limit: usize,
-//}
+use tabled::object::Segment;
+use tabled::{builder::Builder, Style};
+use tabled::{Alignment, ModifyObject};
 
 fn validate_sentence(sentence: &str) -> Result<(), String> {
     todo!()
 }
 
 fn validate_homoglyphs_limit(homoglyphs_limit: &str) -> Result<(), String> {
-    let h_lim = u8::from_str_radix(homoglyphs_limit, 10).unwrap();
+    let h_lim = u32::from_str_radix(homoglyphs_limit, 10).unwrap();
     if h_lim == 0 {
         Err(String::from("homoglyphs_limit need to be greater than 0."))
     } else {
@@ -36,6 +25,26 @@ fn validate_homoglyphs_limit(homoglyphs_limit: &str) -> Result<(), String> {
 }
 fn validate_confusable_limit(confusable_limit: &str) -> Result<(), String> {
     todo!()
+}
+
+pub fn construct_output(compute_homoglyphs_result: Vec<Homoglyphs>) {
+    let mut builder = Builder::default();
+    let results_len = &compute_homoglyphs_result[..].len();
+
+    for homoglyphs in compute_homoglyphs_result {
+        let homoglyphs_str: Vec<String> = homoglyphs.0.iter().map(|f| f.0.to_string()).collect();
+        builder.add_record(homoglyphs_str);
+    }
+
+    let mut builder = builder.index();
+    builder.transpose();
+    builder.hide_index();
+    let table = builder
+        .build()
+        .with(Style::rounded())
+        .with(Segment::all().modify().with(Alignment::center()));
+
+    println!("{}", table);
 }
 
 fn main() {
@@ -79,10 +88,11 @@ fn main() {
         )
         .get_matches();
 
-    // TODO : Do it only one time by creating a MANAGED DIRECTORY
+    // TODO: Do it only one time by creating a MANAGED DIRECTORY
     let mut search_engine = Tantivy::init();
     search_engine.index();
     //////////////////////////////////////////////////////////////
+
     let mut ch = ComputeHomoglyphs::new();
 
     if matches.is_present("confusable_limit") && matches.is_present("homoglyphs_limit") {
@@ -99,8 +109,9 @@ fn main() {
         let sentence_clone = sentence.clone();
 
         let results =
-            ch.compute_with_limit(sentence_clone.as_str(), homoglyphs_limit, confusable_limit);
-        //println!("{:#?}", results)
+            ch.compute_with_limit(sentence_clone.trim(), homoglyphs_limit, confusable_limit);
+
+        construct_output(results)
     } else if matches.is_present("confusable_limit") {
         println!("Confuable  present");
         let confusable_limit: usize = *matches
@@ -110,8 +121,9 @@ fn main() {
         let sentence: &String = &*matches.get_one("sentence").unwrap();
         let sentence_clone = sentence.clone();
 
-        let results = ch.compute_with_n_confusable(sentence_clone.as_str(), confusable_limit);
-        //println!("{:#?}", results)
+        let results = ch.compute_with_n_confusable(sentence_clone.trim(), confusable_limit);
+
+        construct_output(results)
     } else if matches.is_present("homoglyphs_limit") {
         println!("homoglyphs present");
 
@@ -122,15 +134,17 @@ fn main() {
         let sentence: &String = &*matches.get_one("sentence").unwrap();
         let sentence_clone = sentence.clone();
 
-        let results = ch.compute_with_n_permutation(sentence_clone.as_str(), homoglyphs_limit);
-        //println!("{:#?}", results)
+        let results = ch.compute_with_n_permutation(sentence_clone.trim(), homoglyphs_limit);
+
+        construct_output(results)
     } else if matches.is_present("all") {
         println!("all");
         let sentence: &String = &*matches.get_one("sentence").unwrap();
         let sentence_clone = sentence.clone();
-        let results = ch.compute(sentence_clone.as_str());
+        let results = ch.compute(sentence_clone.trim());
 
-        //// NEED SPECIAL HANDLING to not crash / take all mem
+        //// TODO: NEED SPECIAL HANDLING to not crash / take all mem
+        construct_output(results)
     } else {
         println!("DEFAULT");
         let DEFAULT_CONFUSABLE_LIMIT = 8;
@@ -138,9 +152,11 @@ fn main() {
         let sentence: &String = &*matches.get_one("sentence").unwrap();
         let sentence_clone = sentence.clone();
         let results = ch.compute_with_limit(
-            sentence_clone.as_str(),
+            sentence_clone.trim(),
             DEFAULT_HOMOGLYPHS_LIMIT,
             DEFAULT_CONFUSABLE_LIMIT,
         );
+
+        construct_output(results)
     }
 }

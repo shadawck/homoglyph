@@ -2,7 +2,7 @@ use crate::{Decodable, Encodable};
 use serde::{Deserialize, Serialize};
 use std::{num::ParseIntError, str::FromStr};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub struct Glyph(pub char);
 
 impl Glyph {
@@ -17,7 +17,7 @@ impl Encodable<EncodedGlyph> for Glyph {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct EncodedGlyph(pub String);
 
 impl EncodedGlyph {
@@ -29,7 +29,6 @@ impl EncodedGlyph {
 impl FromStr for EncodedGlyph {
     type Err = ();
 
-    // EncodedGlyph::from_str("14e5c")
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(EncodedGlyph::new(s.to_string()))
     }
