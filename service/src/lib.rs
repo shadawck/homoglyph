@@ -1,12 +1,11 @@
-use std::str::FromStr;
-
 use domain::{
     domain::{SentenceDomain, WordDomain},
     homoglyphs::Homoglyphs,
     sentence::Sentence,
     Encodable,
 };
-use drivers::tantivy::*;
+use drivers::{tantivy::*, SearchEngine};
+use std::str::FromStr;
 //use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 
 //#[wasm_bindgen]
@@ -17,9 +16,9 @@ pub struct ComputeHomoglyphs {
 //#[wasm_bindgen]
 impl ComputeHomoglyphs {
     //#[wasm_bindgen(constructor)]
+
     pub fn new() -> ComputeHomoglyphs {
-        let mut se = Tantivy::init();
-        se.index();
+        let se = Tantivy::new();
         ComputeHomoglyphs { search_engine: se }
     }
 

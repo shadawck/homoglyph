@@ -1,64 +1,109 @@
-//use std::path::{Path, PathBuf};
+use std::fs::{create_dir_all, read_to_string, File};
+use std::io::Write;
+use std::path::PathBuf;
 use std::str::FromStr;
 
 use domain::glyph::EncodedGlyph;
 use domain::word::EncodedWord;
 use tantivy::collector::TopDocs;
-use tantivy::directory::RamDirectory;
+use tantivy::directory::{MmapDirectory, RamDirectory};
 use tantivy::query::{Query, QueryParser};
 use tantivy::schema::{STORED, TEXT};
-use tantivy::{doc, IndexSettings, IndexWriter, ReloadPolicy};
+use tantivy::{doc, IndexSettings, IndexWriter, Inventory, ReloadPolicy};
 use tantivy::{schema::Schema, Index};
 
 use domain::confusable;
 use domain::domain::{SentenceDomain, WordDomain};
 use domain::sentence::EncodedSentence;
 
+use crate::SearchEngine;
+
+#[allow(dead_code)]
 pub struct Tantivy {
     index: Index,
     schema: Schema,
     queries_by_domain: Vec<Vec<Box<dyn Query>>>,
     index_writer: IndexWriter,
+    inventory: Inventory<PathBuf>,
 }
 
-impl Tantivy {
-    fn create_schema() -> Schema {
-        let mut schema_builder = Schema::builder();
-        schema_builder.add_text_field("glyph", TEXT | STORED);
-        schema_builder.build()
+static HOMOGLYPHS_DIR: &'static str = "/tmp/homoglyphs";
+static HOMOGLYPHS_STATE_FILE: &'static str = "/tmp/homoglyphs/.state";
+
+fn create_schema() -> Schema {
+    let mut schema_builder = Schema::builder();
+    schema_builder.add_text_field("glyph", TEXT | STORED);
+    schema_builder.build()
+}
+
+fn build_mmap_path() -> PathBuf {
+    let mut path = PathBuf::new();
+    path.push(HOMOGLYPHS_DIR);
+    path
+}
+
+fn create_managed_index(schema: &Schema) -> Index {
+    let homoglyphs_dir = build_mmap_path();
+    if !homoglyphs_dir.exists() {
+        create_dir_all(&homoglyphs_dir).unwrap();
     }
 
-    fn create_in_ram_index(ram_directory: RamDirectory, schema: &Schema) -> Index {
-        Index::create(
-            ram_directory.to_owned(),
-            schema.to_owned(),
-            IndexSettings::default(),
-        )
-        .unwrap()
-    }
+    let mmap = MmapDirectory::open(homoglyphs_dir).unwrap();
+    //let managed_mmap = ManagedDirectory::wrap(Box::new(mmap.clone())).unwrap();
 
-    fn create_index_writer(index: &Index) -> IndexWriter {
-        index.writer(50_000_000).unwrap()
-    }
+    let index = Index::open_or_create(mmap.clone(), schema.to_owned()).unwrap();
+    index
+}
+fn create_in_ram_index(ram_directory: RamDirectory, schema: &Schema) -> Index {
+    Index::create(
+        ram_directory.to_owned(),
+        schema.to_owned(),
+        IndexSettings::default(),
+    )
+    .unwrap()
+}
 
-    pub fn init() -> Self {
-        let schema = Tantivy::create_schema();
-        let ramd = RamDirectory::create();
+// TODO: Implement a Config Pattern and a State Pattern
+// TODO: Add inventory tracking and hash checking on living file in new
+// TODO: Add Garbage collect
+#[allow(dead_code)]
+impl SearchEngine for Tantivy {
+    fn init() -> Self {
+        let schema = create_schema();
 
-        let index = Tantivy::create_in_ram_index(ramd, &schema);
-        let index_writer = Tantivy::create_index_writer(&index);
+        //let ramd = RamDirectory::create();
+        //let index = Tantivy::create_in_ram_index(ramd, &schema);
+
+        let index = create_managed_index(&schema);
+        let index_writer = index.writer(50_000_000).unwrap();
 
         Self {
             index,
             schema,
             queries_by_domain: Vec::<Vec<Box<dyn Query>>>::new(),
             index_writer,
+            inventory: Inventory::default(),
         }
     }
+    fn new() -> Self {
+        let mut tantivy = Self::init();
 
-    pub fn index(&mut self) {
+        let contents = read_to_string(HOMOGLYPHS_STATE_FILE);
+
+        let indexed_state = match contents {
+            Ok(p) => p,                // indexed
+            Err(_) => "0".to_string(), // not indexed
+        };
+
+        if i32::from_str(indexed_state.as_str()).unwrap() == 0 {
+            tantivy.index();
+        }
+
+        tantivy
+    }
+
+    fn index(&mut self) {
         let confusable = confusable::confusable::HEX_FILE;
-
         let glyph = self.schema.get_field("glyph").unwrap();
 
         for line in confusable.lines() {
@@ -66,9 +111,12 @@ impl Tantivy {
         }
 
         self.index_writer.commit().unwrap();
+
+        let mut file = File::create("/tmp/homoglyphs/.state").unwrap();
+        file.write_all(b"1").unwrap();
     }
 
-    pub fn query(&mut self, mut sentence_enc: EncodedSentence) {
+    fn query(&mut self, mut sentence_enc: EncodedSentence) {
         let glyph = self.schema.get_field("glyph").unwrap();
         let query_parser = QueryParser::for_index(&self.index, vec![glyph]);
 
@@ -82,7 +130,7 @@ impl Tantivy {
         }
     }
 
-    pub fn search(&mut self) -> SentenceDomain {
+    fn search(&mut self) -> SentenceDomain {
         let reader = self
             .index
             .reader_builder()

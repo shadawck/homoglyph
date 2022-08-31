@@ -1,5 +1,3 @@
 [workspace]
-
 members = ["domain", "service", "drivers", "cli", "api"]
-
 default-run = "cli"

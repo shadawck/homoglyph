@@ -6,5 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tantivy = { version = "0.18.0", default-features = false }
+tantivy = { version = "0.18.0" } #, default-features = false
 domain = { path = "../domain" }
+dirs = "4.0.0"

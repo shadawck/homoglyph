@@ -1,11 +1,14 @@
-//use domain::domains::Domains;
-//use domain::sentence::Sentence;
+use domain::{
+    domain::SentenceDomain,
+    sentence::{EncodedSentence, Sentence},
+};
 
 pub mod tantivy;
 
-//pub trait SearchEngine<'a> {
-//    fn init(&mut self) -> Self;
-//    fn index(&mut self);
-//    fn query(&mut self, sentence: Sentence);
-//    fn search(&mut self) -> Domains;
-//}
+pub trait SearchEngine {
+    fn init() -> Self;
+    fn index(&mut self);
+    fn query(&mut self, sentence_enc: EncodedSentence);
+    fn new() -> Self;
+    fn search(&mut self) -> SentenceDomain;
+}
