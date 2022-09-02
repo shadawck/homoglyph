@@ -3,18 +3,18 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::str::FromStr;
 
+use domain::confusable;
+use domain::domain::{SentenceDomain, WordDomain};
 use domain::glyph::EncodedGlyph;
+use domain::sentence::EncodedSentence;
 use domain::word::EncodedWord;
+
 use tantivy::collector::TopDocs;
 use tantivy::directory::{MmapDirectory, RamDirectory};
 use tantivy::query::{Query, QueryParser};
 use tantivy::schema::{STORED, TEXT};
 use tantivy::{doc, IndexSettings, IndexWriter, Inventory, ReloadPolicy};
 use tantivy::{schema::Schema, Index};
-
-use domain::confusable;
-use domain::domain::{SentenceDomain, WordDomain};
-use domain::sentence::EncodedSentence;
 
 use crate::SearchEngine;
 
@@ -23,8 +23,7 @@ pub struct Tantivy {
     index: Index,
     schema: Schema,
     queries_by_domain: Vec<Vec<Box<dyn Query>>>,
-    index_writer: IndexWriter,
-    inventory: Inventory<PathBuf>,
+    //index_writer: IndexWriter,
 }
 
 static HOMOGLYPHS_DIR: &'static str = "/tmp/homoglyphs";
@@ -54,6 +53,7 @@ fn create_managed_index(schema: &Schema) -> Index {
     let index = Index::open_or_create(mmap.clone(), schema.to_owned()).unwrap();
     index
 }
+
 fn create_in_ram_index(ram_directory: RamDirectory, schema: &Schema) -> Index {
     Index::create(
         ram_directory.to_owned(),
@@ -75,14 +75,12 @@ impl SearchEngine for Tantivy {
         //let index = Tantivy::create_in_ram_index(ramd, &schema);
 
         let index = create_managed_index(&schema);
-        let index_writer = index.writer(50_000_000).unwrap();
 
         Self {
             index,
             schema,
             queries_by_domain: Vec::<Vec<Box<dyn Query>>>::new(),
-            index_writer,
-            inventory: Inventory::default(),
+            //index_writer,
         }
     }
     fn new() -> Self {
@@ -96,9 +94,10 @@ impl SearchEngine for Tantivy {
         };
 
         if i32::from_str(indexed_state.as_str()).unwrap() == 0 {
+            println!("Indexing");
             tantivy.index();
         }
-
+        println!("Index already computed");
         tantivy
     }
 
@@ -106,11 +105,13 @@ impl SearchEngine for Tantivy {
         let confusable = confusable::confusable::HEX_FILE;
         let glyph = self.schema.get_field("glyph").unwrap();
 
+        let mut index_writer = self.index.writer(50_000_000).unwrap();
+
         for line in confusable.lines() {
-            self.index_writer.add_document(doc!(glyph => line)).unwrap();
+            index_writer.add_document(doc!(glyph => line)).unwrap();
         }
 
-        self.index_writer.commit().unwrap();
+        index_writer.commit().unwrap();
 
         let mut file = File::create("/tmp/homoglyphs/.state").unwrap();
         file.write_all(b"1").unwrap();

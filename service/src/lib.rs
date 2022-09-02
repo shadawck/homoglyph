@@ -6,17 +6,24 @@ use domain::{
 };
 use drivers::{tantivy::*, SearchEngine};
 use std::str::FromStr;
-//use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 
-//#[wasm_bindgen]
+pub fn homoglyphs_to_string(homoglyphs_vec: Vec<Homoglyphs>) -> Vec<Vec<String>> {
+    let mut res_vec = Vec::<Vec<String>>::new();
+    for hs in homoglyphs_vec {
+        let mut h_vec = Vec::<String>::new();
+        for h in hs.0.iter() {
+            h_vec.push(h.to_string());
+        }
+        res_vec.push(h_vec);
+    }
+    res_vec
+}
+
 pub struct ComputeHomoglyphs {
     search_engine: Tantivy,
 }
 
-//#[wasm_bindgen]
 impl ComputeHomoglyphs {
-    //#[wasm_bindgen(constructor)]
-
     pub fn new() -> ComputeHomoglyphs {
         let se = Tantivy::new();
         ComputeHomoglyphs { search_engine: se }
@@ -88,17 +95,6 @@ impl ComputeHomoglyphs {
         let new_sd = SentenceDomain::new(wd_custom);
         new_sd.generate(Some(n_permutation))
     }
-
-    // Wasm impl
-    //pub fn js_compute_all_homoglyphs(&mut self, js_sentence: &str) -> JsValue {
-    //    let hgs = Self::compute_all_homoglyphs(self, js_sentence);
-    //    JsValue::from_serde(&hgs).unwrap()
-    //}
-
-    //pub fn js_compute_n_homoglyphs(&mut self, js_sentence: &str, n_permutation: usize) -> JsValue {
-    //    let hgs = Self::compute_n_homoglyphs(self, js_sentence, n_permutation);
-    //    JsValue::from_serde(&hgs).unwrap()
-    //}
 }
 
 #[cfg(test)]

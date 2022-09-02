@@ -1,0 +1,6 @@
+./web-app/client/node_modules/
+./web-app/client/build/
+./target/
+./service-wasm-undoable/
+./cli
+.vscode

@@ -1,7 +1,4 @@
-use domain::{
-    domain::SentenceDomain,
-    sentence::{EncodedSentence, Sentence},
-};
+use domain::{domain::SentenceDomain, sentence::EncodedSentence};
 
 pub mod tantivy;
 

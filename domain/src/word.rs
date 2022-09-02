@@ -1,10 +1,12 @@
+use serde::Serialize;
+
 use crate::{
     glyph::{EncodedGlyph, Glyph},
     Decodable, Encodable,
 };
 use std::{num::ParseIntError, slice::Iter, str::FromStr};
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize)]
 pub struct Word(pub Vec<Glyph>);
 
 impl Word {
@@ -30,6 +32,7 @@ impl FromStr for Word {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut word: Vec<Glyph> = Vec::new();
+
         for c in s.chars().into_iter() {
             word.push(Glyph::new(c));
         }
@@ -38,15 +41,15 @@ impl FromStr for Word {
     }
 }
 
-impl From<Word> for String {
-    fn from(word: Word) -> Self {
-        let mut string = String::new();
-        for glyph in word.0.iter() {
-            string.push_str(glyph.0.to_string().as_str())
-        }
-        string
-    }
-}
+//impl From<Word> for String {
+//    fn from(word: Word) -> Self {
+//        let mut string = String::new();
+//        for glyph in word.0.iter() {
+//            string.push_str(glyph.0.to_string().as_str())
+//        }
+//        string
+//    }
+//}
 
 impl Encodable<EncodedWord> for Word {
     fn encode(&self) -> Result<EncodedWord, ParseIntError> {
@@ -82,7 +85,6 @@ impl EncodedWord {
 
 impl From<&str> for EncodedWord {
     fn from(s: &str) -> Self {
-        // Check of encoded_str
         let mut word: Vec<EncodedGlyph> = Vec::new();
         for c in s.chars().into_iter() {
             word.push(EncodedGlyph::from(c));

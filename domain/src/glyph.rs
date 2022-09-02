@@ -1,7 +1,9 @@
+use serde::Serialize;
+
 use crate::{Decodable, Encodable};
 use std::{num::ParseIntError, str::FromStr};
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize)]
 pub struct Glyph(pub char);
 
 impl Glyph {

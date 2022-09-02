@@ -30,8 +30,9 @@ impl FromStr for Sentence {
         let sentence: Vec<Word> = s_dec
             .split(" ")
             .into_iter()
-            .map(|w: &str| Word::from_str(w).unwrap())
+            .map(|w| Word::from_str(w).unwrap())
             .collect();
+
         Ok(Sentence::new(sentence))
     }
 }

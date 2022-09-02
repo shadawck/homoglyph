@@ -99,7 +99,7 @@ fn main() {
 
         construct_output(results)
     } else if matches.is_present("confusable_limit") {
-        println!("Confuable  present");
+        println!("Confusable  present");
         let confusable_limit: usize = *matches
             .get_one("confusable_limit")
             .expect("confusable_limit is required in this case");
