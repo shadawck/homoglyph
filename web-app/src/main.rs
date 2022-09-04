@@ -12,13 +12,17 @@ fn make_cors() -> Cors {
     let allowed_origins = AllowedOrigins::some_exact(&[
         "http://127.0.0.1:8000",
         "http://127.0.0.1:8000/api/homoglyphs",
+        "http://127.0.0.1:3000/api/homoglyphs",
+        "http://127.0.0.1:3000",
+        "http://localhost:3000",
+        "http://localhost:3000/api/homoglyphs",
     ]);
     CorsOptions {
         allowed_origins,
         allowed_methods: vec![Post, Get].into_iter().map(From::from).collect(),
         allowed_headers: AllowedHeaders::some(&[
-            "Authorization",
-            "Accept",
+            //"Authorization",
+            //"Accept",
             "Access-Control-Allow-Origin",
         ]),
         allow_credentials: true,
