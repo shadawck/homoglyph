@@ -1,4 +1,4 @@
-use domain::{domain::SentenceDomain, sentence::EncodedSentence};
+use homoglyph_core::{domain::SentenceDomain, sentence::EncodedSentence};
 
 pub mod tantivy;
 

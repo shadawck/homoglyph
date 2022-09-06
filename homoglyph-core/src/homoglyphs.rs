@@ -1,9 +1,9 @@
-use serde::Serialize;
+//use serde::Serialize;
 
 use crate::{homoglyph::Homoglyph, word::Word};
 use std::{fmt::Display, str::FromStr};
 
-#[derive(Debug, PartialEq, Clone, Serialize)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Homoglyphs(pub Vec<Homoglyph>);
 
 impl Homoglyphs {

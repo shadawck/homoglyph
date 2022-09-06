@@ -1,3 +1,8 @@
 [workspace]
-members = ["domain", "service", "drivers", "cli", "web-app"]
-default-run = "cli"
+members = [
+    "homoglyph-core",
+    "homoglyph-service",
+    "homoglyph-driver",
+    "homoglyph-server",
+    "homoglyph-cli",
+]

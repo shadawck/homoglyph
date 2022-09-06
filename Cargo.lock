@@ -431,28 +431,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "domain"
-version = "0.1.0"
-dependencies = [
- "permutator",
- "serde",
- "wasm-bindgen",
-]
-
-[[package]]
 name = "downcast-rs"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9ea835d29036a4087793836fa931b08837ad5e957da9e23886b29586fb9b6650"
-
-[[package]]
-name = "drivers"
-version = "0.1.0"
-dependencies = [
- "dirs",
- "domain",
- "tantivy",
-]
 
 [[package]]
 name = "either"
@@ -722,13 +704,48 @@ dependencies = [
 ]
 
 [[package]]
+name = "homoglyph-core"
+version = "0.1.0"
+dependencies = [
+ "permutator",
+ "serde",
+]
+
+[[package]]
+name = "homoglyph-driver"
+version = "0.1.0"
+dependencies = [
+ "dirs",
+ "homoglyph-core",
+ "tantivy",
+]
+
+[[package]]
+name = "homoglyph-server"
+version = "0.1.0"
+dependencies = [
+ "homoglyph-service",
+ "rocket",
+ "rocket_cors",
+ "serde",
+]
+
+[[package]]
+name = "homoglyph-service"
+version = "0.1.0"
+dependencies = [
+ "homoglyph-core",
+ "homoglyph-driver",
+]
+
+[[package]]
 name = "homoglyphs"
 version = "0.1.0"
 dependencies = [
  "clap",
- "domain",
- "drivers",
- "service",
+ "homoglyph-core",
+ "homoglyph-driver",
+ "homoglyph-service",
  "tabled",
 ]
 
@@ -1632,14 +1649,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "service"
-version = "0.1.0"
-dependencies = [
- "domain",
- "drivers",
-]
-
-[[package]]
 name = "sha2"
 version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2286,16 +2295,6 @@ name = "wasm-bindgen-shared"
 version = "0.2.82"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6598dd0bd3c7d51095ff6531a5b23e02acdc81804e30d8f07afb77b7215a140a"
-
-[[package]]
-name = "web-app"
-version = "0.1.0"
-dependencies = [
- "rocket",
- "rocket_cors",
- "serde",
- "service",
-]
 
 [[package]]
 name = "web-sys"

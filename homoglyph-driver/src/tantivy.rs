@@ -3,17 +3,17 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-use domain::confusable;
-use domain::domain::{SentenceDomain, WordDomain};
-use domain::glyph::EncodedGlyph;
-use domain::sentence::EncodedSentence;
-use domain::word::EncodedWord;
+use homoglyph_core::confusable;
+use homoglyph_core::domain::{SentenceDomain, WordDomain};
+use homoglyph_core::glyph::EncodedGlyph;
+use homoglyph_core::sentence::EncodedSentence;
+use homoglyph_core::word::EncodedWord;
 
 use tantivy::collector::TopDocs;
 use tantivy::directory::{MmapDirectory, RamDirectory};
 use tantivy::query::{Query, QueryParser};
 use tantivy::schema::{STORED, TEXT};
-use tantivy::{doc, IndexSettings, IndexWriter, Inventory, ReloadPolicy};
+use tantivy::{doc, IndexSettings, ReloadPolicy};
 use tantivy::{schema::Schema, Index};
 
 use crate::SearchEngine;
@@ -23,7 +23,6 @@ pub struct Tantivy {
     index: Index,
     schema: Schema,
     queries_by_domain: Vec<Vec<Box<dyn Query>>>,
-    //index_writer: IndexWriter,
 }
 
 static HOMOGLYPHS_DIR: &'static str = "/tmp/homoglyphs";
@@ -48,12 +47,11 @@ fn create_managed_index(schema: &Schema) -> Index {
     }
 
     let mmap = MmapDirectory::open(homoglyphs_dir).unwrap();
-    //let managed_mmap = ManagedDirectory::wrap(Box::new(mmap.clone())).unwrap();
-
     let index = Index::open_or_create(mmap.clone(), schema.to_owned()).unwrap();
     index
 }
 
+#[allow(dead_code)]
 fn create_in_ram_index(ram_directory: RamDirectory, schema: &Schema) -> Index {
     Index::create(
         ram_directory.to_owned(),
@@ -179,7 +177,7 @@ impl SearchEngine for Tantivy {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use domain::sentence::{EncodedSentence, Sentence};
+    use homoglyph_core::sentence::{EncodedSentence, Sentence};
 
     #[test]
     fn when_init_then_create_resource() {

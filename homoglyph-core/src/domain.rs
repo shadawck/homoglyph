@@ -42,8 +42,6 @@ impl WordDomain {
         let vector_of_arrays: Vec<&[&str]> = vec.iter().map(AsRef::as_ref).collect();
         let str_domains: &[&[&str]] = &vector_of_arrays[..];
 
-        //let mut counter = 0;
-        //let timer = Instant::now();
         let cart = CartesianProductIterator::new(str_domains).into_iter();
 
         let match_n = match n {
@@ -55,7 +53,6 @@ impl WordDomain {
 
         for _ in 0..match_n {
             for permutation in cart_take.next() {
-                //counter += 1;
                 let p: String = permutation
                     .iter()
                     .map(|string_glyph_enc| {
@@ -70,8 +67,6 @@ impl WordDomain {
             }
         }
 
-        //println!("{:?}", string);
-        //println!("Total {} products done in {:?}", counter, timer.elapsed());
         Homoglyphs::from(string)
     }
 

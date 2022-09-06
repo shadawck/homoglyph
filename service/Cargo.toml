@@ -1,9 +1,0 @@
-[package]
-name = "service"
-version = "0.1.0"
-edition = "2021"
-authors = ["shadawck"]
-
-[dependencies]
-domain = { path = "../domain" }
-drivers = { path = "../drivers" }

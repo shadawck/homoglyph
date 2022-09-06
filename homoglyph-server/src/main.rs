@@ -2,29 +2,26 @@
 extern crate rocket;
 extern crate rocket_cors;
 
+use homoglyph_service::*;
 use rocket::http::Method::{Get, Post};
 use rocket::{fs::relative, fs::FileServer, serde::json::Json};
 use rocket_cors::{AllowedHeaders, AllowedOrigins, Cors, CorsOptions};
 use serde::{Deserialize, Serialize};
-use service::*;
 
 fn make_cors() -> Cors {
     let allowed_origins = AllowedOrigins::some_exact(&[
         "http://127.0.0.1:8000",
         "http://127.0.0.1:8000/api/homoglyphs",
-        "http://127.0.0.1:3000/api/homoglyphs",
+        // Debugging
         "http://127.0.0.1:3000",
         "http://localhost:3000",
         "http://localhost:3000/api/homoglyphs",
+        "http://127.0.0.1:3000/api/homoglyphs",
     ]);
     CorsOptions {
         allowed_origins,
         allowed_methods: vec![Post, Get].into_iter().map(From::from).collect(),
-        allowed_headers: AllowedHeaders::some(&[
-            //"Authorization",
-            //"Accept",
-            "Access-Control-Allow-Origin",
-        ]),
+        allowed_headers: AllowedHeaders::some(&["Access-Control-Allow-Origin"]),
         allow_credentials: true,
         ..Default::default()
     }
@@ -51,11 +48,6 @@ macro_rules! conv_json {
             homoglyphs: homoglyphs_to_string($x),
         })
     };
-}
-
-#[get("/healthy")]
-fn healthy() -> &'static str {
-    "true"
 }
 
 #[post("/homoglyphs", data = "<homoglyphs_request>")]
@@ -103,7 +95,7 @@ fn homoglyphs(homoglyphs_request: Json<HomoglyphsRequest>) -> Json<HomoglyphsRes
 fn rocket() -> _ {
     rocket::build()
         .mount("/", FileServer::from(relative!("../client/build")))
-        .mount("/api", routes![homoglyphs, healthy])
+        .mount("/api", routes![homoglyphs])
         .attach(make_cors())
 }
 

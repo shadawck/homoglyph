@@ -1,0 +1,14 @@
+[package]
+name = "homoglyph-service"
+version = "0.1.0"
+edition = "2021"
+authors = ["shadawck"]
+license = "MIT OR Apache-2.0"
+readme = "./README"
+documentation = "https://docs.rs/homoglyph-service"
+repository = "https://github.com/shadawck/homoglyph"
+
+
+[dependencies]
+homoglyph-core = { version = "0.1.0", path = "../homoglyph-core" }
+homoglyph-driver = { version = "0.1.0", path = "../homoglyph-driver" }

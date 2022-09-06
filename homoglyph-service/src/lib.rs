@@ -1,10 +1,10 @@
-use domain::{
+use homoglyph_core::{
     domain::{SentenceDomain, WordDomain},
     homoglyphs::Homoglyphs,
     sentence::Sentence,
     Encodable,
 };
-use drivers::{tantivy::*, SearchEngine};
+use homoglyph_driver::{tantivy::*, SearchEngine};
 use std::str::FromStr;
 
 pub fn homoglyphs_to_string(homoglyphs_vec: Vec<Homoglyphs>) -> Vec<Vec<String>> {

@@ -1,12 +1,10 @@
 [package]
-name = "web-app"
+name = "homoglyph-server"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 rocket = { version = "0.5.0-rc.2", features = ["json"] }
 serde = "1.0.144"
 rocket_cors = { git = "https://github.com/lawliet89/rocket_cors.git", rev = "54fae070" }
-service = { path = "../service" }
+homoglyph-service = { version = "0.1.0", path = "../homoglyph-service" }

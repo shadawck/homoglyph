@@ -1,0 +1,17 @@
+[package]
+name = "homoglyph-core"
+version = "0.1.0"
+edition = "2021"
+authors = ["shadawck"]
+description = "Domain layer for the homoglyph cli and service. Compute homoglyphs for an input sentence."
+documentation = "hhtps://docs.rs/homoglyph-core"
+readme = "./README"
+repository = "https://github.com/shadawck/homoglyph"
+license = "MIT OR Apache-2.0"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+permutator = "0.4.3"
+serde = "1.0.144"

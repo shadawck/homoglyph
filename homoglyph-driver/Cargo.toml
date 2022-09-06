@@ -1,0 +1,15 @@
+[package]
+name = "homoglyph-driver"
+version = "0.1.0"
+edition = "2021"
+authors = ["shadawck"]
+license = "MIT OR Apache-2.0"
+readme = "./README"
+documentation = "https://docs.rs/homoglyph-driver"
+repository = "https://github.com/shadawck/homoglyph"
+
+
+[dependencies]
+tantivy = { version = "0.18.0" }                                   #, default-features = false
+homoglyph-core = { version = "0.1.0", path = "../homoglyph-core" }
+dirs = "4.0.0"

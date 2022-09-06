@@ -1,4 +1,4 @@
-use serde::Serialize;
+//use serde::Serialize;
 
 use crate::{
     glyph::{EncodedGlyph, Glyph},
@@ -6,7 +6,7 @@ use crate::{
 };
 use std::{num::ParseIntError, slice::Iter, str::FromStr};
 
-#[derive(Debug, PartialEq, Clone, Serialize)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Word(pub Vec<Glyph>);
 
 impl Word {

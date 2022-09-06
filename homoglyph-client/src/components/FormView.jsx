@@ -1,4 +1,4 @@
-import { Button, Card, Input, Spacer, Container, Textarea, Row, Col, Grid, Text } from "@nextui-org/react";
+import { Button, Card, Input, Spacer, Container, Navbar, Link, Textarea, Row, Col, Grid, Text } from "@nextui-org/react";
 import { useState, Component } from "react";
 
 class FormInputOption extends Component {
@@ -201,6 +201,7 @@ class DisplayResultArea extends Component {
         const homoglyphs = this.props.homoglyphs;
 
         return (
+
             <Grid xs={12} md={6}>
                 <Container >
                     <Card css={{ minWidth: "200px", minHeight: "500px" }}>
@@ -226,6 +227,7 @@ class DisplayResultArea extends Component {
                     </Card>
                 </Container>
             </Grid >
+
         );
     }
 

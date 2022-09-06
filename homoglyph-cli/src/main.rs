@@ -3,8 +3,8 @@
 // homoglyphs -c 5 "rust is best"
 // homoglyphs "rust is best"
 use clap::{value_parser, App, Arg};
-use domain::homoglyphs::Homoglyphs;
-use service::{self, ComputeHomoglyphs};
+use homoglyph_core::homoglyphs::Homoglyphs;
+use homoglyph_service::{self, ComputeHomoglyphs};
 
 use tabled::object::Segment;
 use tabled::{builder::Builder, Style};
