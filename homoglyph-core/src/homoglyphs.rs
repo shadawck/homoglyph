@@ -1,12 +1,14 @@
-//use serde::Serialize;
+//!
 
 use crate::{homoglyph::Homoglyph, word::Word};
 use std::{fmt::Display, str::FromStr};
 
+/// Homoglyphs is a Vector of Homoglyph representing all the permutation computed for the input sequence.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Homoglyphs(pub Vec<Homoglyph>);
 
 impl Homoglyphs {
+    /// Create an Homoglyphs from a Vector of Homoglyph
     pub fn new(homoglyphs: Vec<Homoglyph>) -> Homoglyphs {
         Self(homoglyphs)
     }

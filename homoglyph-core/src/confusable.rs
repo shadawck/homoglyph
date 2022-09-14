@@ -1,3 +1,5 @@
+//! List of confusable in unicode format.
+//! Each line for a specific character.
 pub mod confusable {
     pub const HEX_FILE: &str = r###"
 002d, 06d4, 2cba, fe58, 02d7, 2212, 2796, 2011, 2043, 2012, 2013, 2010

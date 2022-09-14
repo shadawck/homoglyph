@@ -95,7 +95,6 @@ impl SearchEngine for Tantivy {
             println!("Indexing");
             tantivy.index();
         }
-        println!("Index already computed");
         tantivy
     }
 

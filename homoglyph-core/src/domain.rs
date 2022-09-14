@@ -1,16 +1,20 @@
+//! A domain for each Word of the input sentence.
+
 use crate::{glyph::EncodedGlyph, homoglyphs::Homoglyphs, word::EncodedWord, Decodable};
 use permutator::CartesianProductIterator;
 use std::{fmt::Display, slice::Iter, str::FromStr};
 
+/// A WordDomain reprensent and encapsulate permutation of confusable for one Word of the input sentence.
 #[derive(Debug, PartialEq, Clone)]
 pub struct WordDomain(pub Vec<EncodedWord>);
 
 impl WordDomain {
+    /// Create a new WordDomain from a vector of EncodedWord
     pub fn new(word_domain: Vec<EncodedWord>) -> Self {
         Self(word_domain)
     }
 
-    /// Take only 'n' confusable for each glyph to build the domain of a word
+    /// Build a WordDomain in where we take 'n' confusable glyph for each glyph of a Word from the input sentence.
     pub fn take(&mut self, n: usize) -> Self {
         let mut new_domain: Vec<EncodedWord> = Vec::new();
         let mut dest = vec![EncodedWord::from_str("").unwrap(); self.0.len()];
@@ -24,9 +28,11 @@ impl WordDomain {
                 new_domain.push(enc_word)
             }
         }
+
         Self(new_domain)
     }
 
+    /// Generate all possible or 'n' homoglyphs of a word (one) from a WordDomain.
     pub fn generate(&mut self, n: Option<usize>) -> Homoglyphs {
         let mut string = Vec::new();
 
@@ -75,14 +81,17 @@ impl WordDomain {
     }
 }
 
+/// A SentenceDomain represent and encapsulate the permutation for all the WordDomain computed from the input sequence.
 #[derive(Debug, Clone, PartialEq)]
 pub struct SentenceDomain(pub Vec<WordDomain>);
 
 impl SentenceDomain {
+    /// Create a new SentenceDomain from a vector of WordDomain
     pub fn new(word_domains: Vec<WordDomain>) -> Self {
         Self(word_domains)
     }
 
+    /// Generate all possible or 'n' homoglyphs computed in a WordDomain
     pub fn generate(mut self, n: Option<usize>) -> Vec<Homoglyphs> {
         let mut sentence_homoglyph = Vec::<Homoglyphs>::new();
         for wd in self.0.iter_mut() {

@@ -12,5 +12,6 @@ repository = "https://github.com/shadawck/homoglyph"
 homoglyph-core = { version = "0.1.0", path = "../homoglyph-core" }
 homoglyph-driver = { version = "0.1.0", path = "../homoglyph-driver" }
 homoglyph-service = { version = "0.1.0", path = "../homoglyph-service" }
-clap = { version = "3.2.17" }
+clap = { version = "3.2.17", features = ["derive"] }
 tabled = "0.8.0"
+serde_json = "1.0.85"

@@ -1,12 +1,14 @@
-//use serde::Serialize;
+//! Homoglyph definition : <https://en.wikipedia.org/wiki/Homoglyph>
 
 use crate::{glyph::Glyph, word::Word};
 use std::{fmt::Display, slice::Iter};
 
+/// An homoglyph is composed of one Word.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Homoglyph(pub Word);
 
 impl Homoglyph {
+    // Create a new Homoglyph from a computed Word.
     pub fn new(word: Word) -> Homoglyph {
         Self(word)
     }
