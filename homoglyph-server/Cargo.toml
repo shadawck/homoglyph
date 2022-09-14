@@ -2,6 +2,12 @@
 name = "homoglyph-server"
 version = "0.1.0"
 edition = "2021"
+authors = ["shadawck"]
+description = ""
+readme = "./README"
+license = "MIT OR Apache-2.0"
+documentation = "https://docs.rs/homoglyph-cli"
+repository = "https://github.com/shadawck/homoglyph-server"
 
 [dependencies]
 rocket = { version = "0.5.0-rc.2", features = ["json"] }

@@ -3,6 +3,5 @@ members = [
     "homoglyph-core",
     "homoglyph-service",
     "homoglyph-driver",
-    "homoglyph-server",
     "homoglyph-cli",
 ]

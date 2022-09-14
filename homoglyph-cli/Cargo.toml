@@ -3,9 +3,10 @@ name = "homoglyphs"
 version = "0.1.0"
 edition = "2021"
 authors = ["shadawck"]
+readme = "./README"
 description = ""
 license = "MIT OR Apache-2.0"
-documentation = "https://docs.rs/homoglyph-cli"
+documentation = "https://docs.rs/homoglyphs"
 repository = "https://github.com/shadawck/homoglyph"
 
 [dependencies]
