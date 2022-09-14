@@ -11,6 +11,6 @@ repository = "https://github.com/shadawck/homoglyph"
 
 
 [dependencies]
-tantivy = { version = "0.18.0" }                                   #, default-features = false
+tantivy = { version = "0.18.0" }
 homoglyph-core = { version = "0.1.0", path = "../homoglyph-core" }
 dirs = "4.0.0"
