@@ -115,26 +115,11 @@ checksum = "29e724a68d9319343bb3328c9cc2dfde263f4b3142ee1059a9980580171c954b"
 dependencies = [
  "atty",
  "bitflags",
- "clap_derive",
  "clap_lex",
  "indexmap",
- "once_cell",
  "strsim",
  "termcolor",
  "textwrap",
-]
-
-[[package]]
-name = "clap_derive"
-version = "3.2.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "13547f7012c01ab4a0e8f8967730ada8f9fdf419e8b6c792788f39cf4e46eefa"
-dependencies = [
- "heck",
- "proc-macro-error",
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]
@@ -368,7 +353,15 @@ name = "homoglyph-core"
 version = "0.1.0"
 dependencies = [
  "permutator",
- "serde",
+]
+
+[[package]]
+name = "homoglyph-core"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d8014b1d09984ce40e2fa8c57a0abe70ee2d3b5f8358a21274602af5197df84d"
+dependencies = [
+ "permutator",
 ]
 
 [[package]]
@@ -376,7 +369,18 @@ name = "homoglyph-driver"
 version = "0.1.0"
 dependencies = [
  "dirs",
- "homoglyph-core",
+ "homoglyph-core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tantivy",
+]
+
+[[package]]
+name = "homoglyph-driver"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "da030ec79397f0eeecd043ae6e2b36982c5ade9031a06510ea663959731fc798"
+dependencies = [
+ "dirs",
+ "homoglyph-core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tantivy",
 ]
 
@@ -384,8 +388,18 @@ dependencies = [
 name = "homoglyph-service"
 version = "0.1.0"
 dependencies = [
- "homoglyph-core",
- "homoglyph-driver",
+ "homoglyph-core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "homoglyph-driver 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "homoglyph-service"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a434e932515dcb55d293be3e953321af00edea86f2872c86910a92564ff06cb8"
+dependencies = [
+ "homoglyph-core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "homoglyph-driver 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -393,9 +407,9 @@ name = "homoglyphs"
 version = "0.1.0"
 dependencies = [
  "clap",
- "homoglyph-core",
- "homoglyph-driver",
- "homoglyph-service",
+ "homoglyph-core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "homoglyph-driver 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "homoglyph-service 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json",
  "tabled",
 ]
