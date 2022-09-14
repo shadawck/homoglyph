@@ -5,7 +5,7 @@
 > An homoglyph is one of two or more graphemes, characters, or glyphs with shapes that appear identical or very similar. The designation is also applied to sequences of characters sharing these properties.
 >
 > The Unicode character set contains many strongly homoglyphic characters known as "confusables". These present security risks in a variety of situations. One might deliberately spoof a domain name by replacing one character with its homoglyph, thus creating a second domain name, not readily distinguishable from the first, that can be exploited in phishing.
-> \- *[Wikiepdia](https://en.wikipedia.org/wiki/Homoglyph)*
+> \- *[wikipedia](https://en.wikipedia.org/wiki/Homoglyph)*
 
 ## Install
 
