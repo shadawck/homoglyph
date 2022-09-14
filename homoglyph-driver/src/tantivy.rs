@@ -69,16 +69,12 @@ impl SearchEngine for Tantivy {
     fn init() -> Self {
         let schema = create_schema();
 
-        //let ramd = RamDirectory::create();
-        //let index = Tantivy::create_in_ram_index(ramd, &schema);
-
         let index = create_managed_index(&schema);
 
         Self {
             index,
             schema,
             queries_by_domain: Vec::<Vec<Box<dyn Query>>>::new(),
-            //index_writer,
         }
     }
     fn new() -> Self {
@@ -92,7 +88,6 @@ impl SearchEngine for Tantivy {
         };
 
         if i32::from_str(indexed_state.as_str()).unwrap() == 0 {
-            println!("Indexing");
             tantivy.index();
         }
         tantivy

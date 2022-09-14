@@ -1,7 +1,6 @@
 use homoglyph_core::{domain::SentenceDomain, sentence::EncodedSentence};
 
 pub mod tantivy;
-
 pub trait SearchEngine {
     fn init() -> Self;
     fn index(&mut self);
