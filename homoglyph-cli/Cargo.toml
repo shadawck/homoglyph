@@ -4,15 +4,15 @@ version = "0.1.0"
 edition = "2021"
 authors = ["shadawck"]
 readme = "./README"
-description = ""
+description = "generate all homoglyphs for a given input sentence"
 license = "MIT OR Apache-2.0"
 documentation = "https://docs.rs/homoglyphs"
 repository = "https://github.com/shadawck/homoglyph"
 
 [dependencies]
-homoglyph-core = { version = "0.1.0", path = "../homoglyph-core" }
-homoglyph-driver = { version = "0.1.0", path = "../homoglyph-driver" }
-homoglyph-service = { version = "0.1.0", path = "../homoglyph-service" }
+homoglyph-core = { version = "0.1.0" }
+homoglyph-driver = { version = "0.1.0" }
+homoglyph-service = { version = "0.1.0" }
 clap = { version = "3.2.17", features = ["derive"] }
 tabled = "0.8.0"
 serde_json = "1.0.85"
